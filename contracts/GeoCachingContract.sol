@@ -29,8 +29,6 @@ contract GeoCachingContract{
         bool isDeleted;
     }
 
-
-
     function isDeleted(uint cacheID) internal view returns(bool result){
         return(cacheID < nextIndex && caches[cacheID].isDeleted);
     }

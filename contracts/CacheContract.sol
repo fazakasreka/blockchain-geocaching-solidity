@@ -70,7 +70,6 @@ contract CacheContract is GeoCachingContract{
         caches[cacheID].problems[caches[cacheID].problemCount++] = Problem(msg.sender, problem);
     }
 
-    
     //You must implement some mechanism that ensures only those who actually found the cache can log their success.
     function findCache(uint cacheID, uint signedAddress) public 
     onlyValidSignature(cacheID, signedAddress)

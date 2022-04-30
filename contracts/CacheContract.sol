@@ -5,7 +5,7 @@ import "./GeoCachingContract.sol";
 
 contract CacheContract is GeoCachingContract{
     
-    modifier onlyOwner(uint cacheID) {
+    modifier onlyOwnerOfCache(uint cacheID) {
         require(msg.sender == caches[cacheID].owner);
         _;
     }
@@ -15,6 +15,7 @@ contract CacheContract is GeoCachingContract{
         _;
     }
 
+    //TODO
     modifier onlyValidSignature(uint cacheID, uint signedAddress){
         caches[cacheID].publicKey;
         signedAddress;
@@ -32,14 +33,12 @@ contract CacheContract is GeoCachingContract{
         GPS memory gpsCoord,
         uint publicKey
     ) public{
-        Cache storage newCache = caches[nextIndex++];
-
+        Cache storage newCache = caches[nextIndexCache++];
         newCache.owner = msg.sender;
         newCache.name = name;
         newCache.description = description;
         newCache.gpsCoord = gpsCoord;
         newCache.publicKey = publicKey;
-        newCache.isDeleted = false;
     }
 
     function modifyCache(
@@ -49,22 +48,22 @@ contract CacheContract is GeoCachingContract{
         GPS memory gpsCoord,
         uint publicKey
     ) public 
-    onlyOwner(cacheID)
+    onlyOwnerOfCache(cacheID)
     onlyValidCache(cacheID){
-        Cache storage newCache = caches[cacheID];
+        Cache storage modifiedCache = caches[cacheID];
 
-        newCache.owner = msg.sender;
-        newCache.name = name;
-        newCache.description = description;
-        newCache.gpsCoord = gpsCoord;
-        newCache.publicKey = publicKey;
-        newCache.isDeleted = false;
+        modifiedCache.owner = msg.sender;
+        modifiedCache.name = name;
+        modifiedCache.description = description;
+        modifiedCache.gpsCoord = gpsCoord;
+        modifiedCache.publicKey = publicKey;
     }
     
     function removeCache(uint cacheID) public 
-    onlyOwner(cacheID){
+    onlyOwnerOfCache(cacheID){
         caches[cacheID].isDeleted = true;
     }
+
     function reportProblem(string memory problem, uint cacheID) public
     onlyValidCache(cacheID){
         caches[cacheID].problems[caches[cacheID].problemCount++] = Problem(msg.sender, problem);
@@ -74,7 +73,7 @@ contract CacheContract is GeoCachingContract{
     function findCache(uint cacheID, uint signedAddress) public 
     onlyValidSignature(cacheID, signedAddress)
     onlyValidCache(cacheID){
-        caches[cacheID].finders.push(msg.sender);
+        caches[cacheID].finders[msg.sender] = true;
     }
 
 }

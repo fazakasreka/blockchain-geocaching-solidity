@@ -11,6 +11,22 @@ contract TrackableContract is GeoCachingContract, CacheContract{
         _;
     }
 
+    modifier onlyTrackableInCache(uint trackableID, uint cacheID) {
+        require(
+            isValid(cacheID)
+            && isInCache(trackableID)
+            && trackables[trackableID].cacheID == cacheID
+        );
+        _;
+    }
+
+    modifier onlyIfSenderAlreadyFoundCache(uint cacheID) {
+        require(caches[cacheID].finders[msg.sender]);
+        _;
+    }
+
+
+
     function makeTrackable (
         string memory name,
         string memory description
@@ -27,12 +43,27 @@ contract TrackableContract is GeoCachingContract, CacheContract{
         nextIndexTrackable++;
     }
 
-    function putTrackable(uint cacheID, uint trackableID) public
+    function putTrackable(uint trackableID, uint cacheID) public
     onlyOwnerOfTrackable(trackableID)
     onlyValidCache(cacheID){
-        caches[cacheID].trackables[
-            caches[cacheID].trackableCount++
-        ] = trackableID;
+
+        addTrackableToCache(trackableID, cacheID);
+
+        trackables[trackableID].owner = address(0);
+        trackables[trackableID].cacheID = cacheID;
+
+        ownerToTrackables[msg.sender].collectedTrackables[cacheID] = false;
+    }
+
+    function takeTrackable(uint trackableID, uint cacheID) public 
+    onlyTrackableInCache(trackableID, cacheID)
+    onlyIfSenderAlreadyFoundCache(cacheID){
+
+        removeTrackableFromCache(trackableID, cacheID);
+
+        trackables[trackableID].owner = msg.sender;
+
+        ownerToTrackables[msg.sender].collectedTrackables[trackableID] = true;
     }
 
 }

@@ -15,8 +15,14 @@ contract CacheContract is GeoCachingContract{
         _;
     }
 
-    //TODO
+    modifier onlyCacheEmpty(uint cacheID) {
+        require(caches[cacheID].trackables.length == 0);
+        _;
+    }
+
+    //BIG TODO
     modifier onlyValidSignature(uint cacheID, uint signedAddress){
+       // bytes32 addressHash = getHash("lol");
         caches[cacheID].publicKey;
         signedAddress;
         msg.sender;
@@ -24,9 +30,6 @@ contract CacheContract is GeoCachingContract{
         _;
     }
 
-
-    //Only cache owners/maintainers may remove or modify caches.
-    //However, all players have the option to report problems with caches, e.g., if it seems to have gone missing or been damaged.
     function makeCache(
         string memory name,
         string memory description,
@@ -60,16 +63,17 @@ contract CacheContract is GeoCachingContract{
     }
     
     function removeCache(uint cacheID) public 
-    onlyOwnerOfCache(cacheID){
+    onlyOwnerOfCache(cacheID)
+    onlyCacheEmpty(cacheID){
         caches[cacheID].isDeleted = true;
     }
 
     function reportProblem(string memory problem, uint cacheID) public
     onlyValidCache(cacheID){
-        caches[cacheID].problems[caches[cacheID].problemCount++] = Problem(msg.sender, problem);
+        caches[cacheID].problems.push(Problem(msg.sender, problem));
     }
+    
 
-    //You must implement some mechanism that ensures only those who actually found the cache can log their success.
     function findCache(uint cacheID, uint signedAddress) public 
     onlyValidSignature(cacheID, signedAddress)
     onlyValidCache(cacheID){

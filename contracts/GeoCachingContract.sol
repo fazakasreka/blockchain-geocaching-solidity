@@ -9,6 +9,25 @@ contract GeoCachingContract{
     uint nextIndexTrackable;
     mapping(address => TarackableCollection) ownerToTrackables;
 
+    function getCache(uint cacheID) private view
+    returns(Cache storage cache){
+        return caches[cacheID];
+    }
+
+    function getTrackable(uint trackableID) private view
+    returns(Trackable storage trackable){
+        return trackables[trackableID];
+    }
+
+    function getTrackableOwner(uint trackableID)private view
+    returns(address owner){
+        return trackables[trackableID].owner;
+    }
+
+    function getCacheTrackables(uint cacheID) private view
+    returns(uint[] memory cachedTrackables){
+        return caches[cacheID].trackables;
+    }
 
     struct GPS{
         uint latitude;
@@ -45,11 +64,10 @@ contract GeoCachingContract{
 
         mapping(address => bool) finders;
 
-        mapping(uint => Problem) problems;
-        uint problemCount;
-
         uint[] trackables;
-        uint trackableCount;
+        mapping(uint => uint) trackableToArrayIndex;
+
+        Problem[] problems;
         
         bool isDeleted;
     }
@@ -64,6 +82,27 @@ contract GeoCachingContract{
 
     function isUnCreated(uint cacheID)internal view returns(bool result){
         return(cacheID >= nextIndexCache);
+    }
+
+    function addTrackableToCache(uint trackableID, uint cacheID) internal{
+        Cache storage modifiedCache = caches[cacheID];
+
+        modifiedCache.trackables.push(trackableID);
+        modifiedCache.trackableToArrayIndex[trackableID] = modifiedCache.trackables.length - 1;
+    }
+
+    function removeTrackableFromCache(uint trackableID, uint cacheID) internal{
+        Cache storage modifiedCache = caches[cacheID];
+
+        uint potentialIndex = modifiedCache.trackableToArrayIndex[trackableID];
+        require(modifiedCache.trackables[potentialIndex] == trackableID);
+        //index is good
+
+        uint last = modifiedCache.trackables[modifiedCache.trackables.length - 1];
+        modifiedCache.trackables[potentialIndex] = last;
+        modifiedCache.trackableToArrayIndex[last] = potentialIndex;
+
+        modifiedCache.trackables.pop();
     }
 
 }

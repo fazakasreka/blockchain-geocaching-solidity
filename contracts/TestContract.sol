@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 contract TestContract{
 
     mapping(string=>Cache) caches;
-    mapping(address=>GPS) playerLocations;
+    //mapping(address=>GPS) playerLocations;
 
     struct GPS{
         uint latitude;
@@ -28,10 +28,10 @@ contract TestContract{
         }
     }
 
-    function findCache(string memory cacheID) public{
+    function findCache(string memory cacheID, uint latitude, uint longitude) public{
         if(!caches[cacheID].isDeleted){
-            if(playerLocations[msg.sender].latitude == caches[cacheID].gpsCoord.latitude &&
-                playerLocations[msg.sender].longitude == caches[cacheID].gpsCoord.longitude){
+            if(/*playerLocations[msg.sender].*/latitude == caches[cacheID].gpsCoord.latitude &&
+                /*playerLocations[msg.sender].*/longitude == caches[cacheID].gpsCoord.longitude){
                 _logSuccess(cacheID);
             }
         }

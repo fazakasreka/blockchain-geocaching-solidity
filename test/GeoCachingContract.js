@@ -41,6 +41,26 @@ contract('TrackableContract', function(accounts) {
         });
     });
 
+    it("Lol", function(){
+        return TrackableContract.deployed().then(function(instance){
+            tc = instance;
+            return tc.makeCache("cache1", 
+                "first cache", 
+                "12, 12", 
+                accounts[0],
+                {from: accounts[1]});
+        })
+        .then(function(){
+            return tc.getLastCache();
+        })
+        .then(function(lastAddedCache){
+            return tc.isValidCache(lastAddedCache);
+        })
+        .then(function(isValidCache){
+            assert.equal(true, isValidCache, "Created cache not valid");
+        });
+    });
+
     //Test case 3
     /*it("Test modify cache", function(){
         var id;

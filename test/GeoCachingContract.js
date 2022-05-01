@@ -27,18 +27,20 @@ contract('TrackableContract', function(accounts) {
             return tc.makeCache("cache1", 
                 "first cache", 
                 "12, 12", 
-                accounts[0],
+                accounts[2],
                 {from: accounts[1]});
         })
         .then(function(){
-            return tc.getLastCache();
-        })
-        .then(function(lastAddedCache){
-            return tc.isValidCache(lastAddedCache);
+            return tc.isValidCache(0);
         })
         .then(function(isValidCache){
             assert.equal(true, isValidCache, "Created cache not valid");
-        });
+        }).then(function(){
+            return tc.getCacheOwner(0)
+        }).then(function(owner){
+            assert.equal(owner, accounts[1], "Created cache not valid");
+        })
+        ;
     });
 
     //Test case 3
@@ -289,38 +291,22 @@ contract('TrackableContract', function(accounts) {
         });
     });
 
-    /*it("Lol", function(){
-        return TrackableContract.deployed().then(function(instance){
-            tc = instance;
-            return tc.makeCache("cache1", 
-                "first cache", 
-                "12, 12", 
-                accounts[0],
-                {from: accounts[1]});
-        })
-        .then(function(){
-            return tc.getLastCache();
-        })
-        .then(function(lastAddedCache){
-            return tc.isValidCache(lastAddedCache);
-        })
-        .then(function(isValidCache){
-            assert.equal(true, isValidCache, "Created cache not valid");
-        });
-    });*/
-
     //Test case 11
     it("Create trackable", function() {
         return TrackableContract.deployed().then(function(instance) {
             tc = instance;
-            return tc.makeTrackable("trackable1", "first", {from: accounts[0]});
+            return tc.makeTrackable("trackable1", "first", {from: accounts[1]});
         }).then(function(){
             return tc.getTrackable(0);
         }).then(function(trackable){
-            assert.equal(accounts[0], trackable[0], "Trackable creator invalid");
-            assert.equal(accounts[0], trackable[1], "Trackable owner invalid");
-            assert.equal("trackable1", trackable[3], "Trackable name invalid");
-            assert.equal("first", trackable[4], "Trackable description invalid");
+            //assert.equal(accounts[1], trackable[0], "Trackable creator invalid");
+            //assert.equal(accounts[1], trackable[1], "Trackable owner invalid");
+            //assert.equal("trackable1", trackable[3], "Trackable name invalid");
+           // assert.equal("first", trackable[4], "Trackable description invalid");
+        }).then(function(){
+            return tc.getTrackableOwner(0);
+        }).then(function(owner){
+            assert.equal(owner, accounts[1], "Trackable owner invalid lol");
         });
     });
 
@@ -328,7 +314,6 @@ contract('TrackableContract', function(accounts) {
     it("Put trackable to cache, not found cache", function() {
         var id;
         return TrackableContract.deployed().then(function(instance) {
-            tc = instance;
             tc = instance;
             return tc.makeCache("cache1", 
                 "first cache", 
@@ -346,7 +331,7 @@ contract('TrackableContract', function(accounts) {
         .catch(function(error) {
            assert.include(
                error.message,
-               'require',
+               'onlyIfSenderAlreadyFoundCache',
                'You can not modify invalid cache.'
            )
         }).then(function(){
@@ -443,7 +428,7 @@ contract('TrackableContract', function(accounts) {
 
     //Test case 16
     //TODO find cache with account 0
-    /*it("Remove trackable from not found cache", function() {
+    it("Remove trackable from not found cache", function() {
         var id;
         return TrackableContract.deployed().then(function(instance) {
             tc = instance;
@@ -473,7 +458,7 @@ contract('TrackableContract', function(accounts) {
         }).then(function(trackables){
             assert.equal(1, trackables.length, "The trackable list should not contain anything");
         });
-    });*/
+    });
 
     //Test case 17
     it("Remove trackable from cache which is not there", function() {
@@ -498,30 +483,54 @@ contract('TrackableContract', function(accounts) {
         });
     });
 
-    //TODO - find cache
-    /*it("Remove trackable from cache", function() {
-        return TrackableContract.deployed().then(function(instance) {
+
+    it("Remove trackable from cache", function() {
+        return TrackableContract.deployed().then(function(instance){
             tc = instance;
             return tc.makeCache("cache1", 
                 "first cache", 
                 "12, 12", 
                 accounts[0],
-                {from: accounts[0]});
+                {from: accounts[1]});
+        })
+        .then(function(){
+            hashedAccount = web3.utils.keccak256(accounts[2]);
+            return web3.eth.sign(hashedAccount, accounts[0]).then(function(signature){
+                    return tc.findCache(
+                        0,
+                        signature,
+                        {from: accounts[2]}
+                    )
+            })
         }).then(function(){
-            return tc.makeTrackable("trackable1", "first", {from: accounts[0]});
+            return tc.makeTrackable("trackable1", "first", {from: accounts[2]});
         }).then(function(){
-            return tc.getLastCache();
-        }).then(function(cacheID){
-            return tc.putTrackable(0, cacheID, {from: accounts[1]});
-        }).then(assert.fail)
-        .catch(function(error) {
-           assert.include(
-               error.message,
-               'require',
-               'You can not take trackable to invalid cache.'
-           )
+            assert.equal(false, tc.isUnCreatedCache.call(0));
+        }).then(function(){
+            return tc.putTrackable(
+                0, //trackableID
+                0, //cacheID
+                {from: accounts[2]});
+        }).then(function(){
+            hashedAccount = web3.utils.keccak256(accounts[2]);
+            return web3.eth.sign(hashedAccount, accounts[1]).then(function(signature){
+                    return tc.findCache(
+                        0,
+                        signature,
+                        {from: accounts[2]}
+                    )
+            })
+        })
+        .then(function(){
+            return tc.takeTrackable(
+                0, //trackableID
+                0  //cacheID
+            );
+        }).then(function(){
+            assert.equal(0, tc.getCacheTrackables.call().length, "getCacheTrackables should be empty");
+            assert.equal(accounts[2], tc.getTrackableOwner.call(), "trackable not owned by the one who took it");
         });
-    });*/
+    });
 
     it("Find cache", function(){
         return TrackableContract.deployed().then(function(instance){

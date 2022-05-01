@@ -7,9 +7,14 @@ contract GeoCachingContract{
     uint nextIndexCache;
     mapping(uint => Trackable) trackables;
     uint nextIndexTrackable;
-    mapping(address => TarackableCollection) ownerToTrackables;
+    mapping(address => TrackableCollection) ownerToTrackables;
 
     //getters for cache
+    function getCacheOwner(uint cacheID) public view
+    returns(address owner){
+        return caches[cacheID].owner;
+    }
+
     function getCacheName(uint cacheID) public view
     returns(string memory name){
         return caches[cacheID].name;
@@ -81,7 +86,7 @@ contract GeoCachingContract{
        return trackableID >= nextIndexTrackable;
     }
 
-    struct TarackableCollection{
+    struct TrackableCollection{
         mapping(uint => bool) collectedTrackables;
     }
 

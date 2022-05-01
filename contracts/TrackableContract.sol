@@ -7,7 +7,7 @@ import "./CacheContract.sol";
 contract TrackableContract is CacheContract{
 
     modifier onlyOwnerOfTrackable(uint trackableID) {
-        require(msg.sender == trackables[trackableID].owner, "onlyOwnerOfTrackable");
+        require(trackables[trackableID].owner == msg.sender, "onlyOwnerOfTrackable");
         _;
     }
 

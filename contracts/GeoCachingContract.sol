@@ -20,7 +20,7 @@ contract GeoCachingContract{
         return caches[cacheID].description;
     }
     function getCacheGPSCoords(uint cacheID) public view
-    returns(GPS memory gpsCoords){
+    returns(string memory gpsCoord){
         return caches[cacheID].gpsCoord;
     }
     function getCachePublicKey(uint cacheID) public view
@@ -53,12 +53,6 @@ contract GeoCachingContract{
         return trackables[trackableID].owner;
     }
 
-
-    struct GPS{
-        string latitude;
-        string longitude;
-    }
-
     struct Problem{
         address reporter;
         string problem;
@@ -71,8 +65,14 @@ contract GeoCachingContract{
         string name;
         string description;
     }
-    function isInCache(uint trackableID) internal view returns(bool result){
-       return trackables[trackableID].owner == address(0);
+    function isInCacheTrackable(uint trackableID) internal view returns(bool result){
+       return trackables[trackableID].owner == address(0) && trackableID < nextIndexTrackable;
+    }
+    function isAtOwnerTrackable(uint trackableID) internal view returns(bool result){
+       return trackables[trackableID].owner != address(0) && trackableID < nextIndexTrackable;
+    }
+    function isUnCreatedTrackable(uint trackableID) internal view returns(bool result){
+       return trackableID >= nextIndexTrackable;
     }
 
     struct TarackableCollection{
@@ -83,7 +83,7 @@ contract GeoCachingContract{
         address owner;
         string name;
         string description;
-        GPS gpsCoord;
+        string gpsCoord;
         uint publicKey;
 
         mapping(address => bool) finders;
@@ -95,17 +95,18 @@ contract GeoCachingContract{
         
         bool isDeleted;
     }
-    function isDeleted(uint cacheID) public view returns(bool result){
+    function isDeletedCache(uint cacheID) public view returns(bool result){
         return(cacheID < nextIndexCache && caches[cacheID].isDeleted);
     }
-    function isValid(uint cacheID)public view returns(bool result){
+    function isValidCache(uint cacheID)public view returns(bool result){
         return(cacheID < nextIndexCache && !caches[cacheID].isDeleted);
     }
-    function isUnCreated(uint cacheID)public view returns(bool result){
+    function isUnCreatedCache(uint cacheID)public view returns(bool result){
         return(cacheID >= nextIndexCache);
     }
 
 
+//INTERNAL!!!!!
     function addTrackableToCache(uint trackableID, uint cacheID) internal{
         Cache storage modifiedCache = caches[cacheID];
 

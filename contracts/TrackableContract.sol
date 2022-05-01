@@ -13,8 +13,8 @@ contract TrackableContract is GeoCachingContract, CacheContract{
 
     modifier onlyTrackableInCache(uint trackableID, uint cacheID) {
         require(
-            isValid(cacheID)
-            && isInCache(trackableID)
+            isValidCache(cacheID)
+            && isInCacheTrackable(trackableID)
             && trackables[trackableID].cacheID == cacheID
         );
         _;
@@ -24,7 +24,6 @@ contract TrackableContract is GeoCachingContract, CacheContract{
         require(caches[cacheID].finders[msg.sender]);
         _;
     }
-
 
 
     function makeTrackable (
@@ -45,7 +44,8 @@ contract TrackableContract is GeoCachingContract, CacheContract{
 
     function putTrackable(uint trackableID, uint cacheID) public
     onlyOwnerOfTrackable(trackableID)
-    onlyValidCache(cacheID){
+    onlyValidCache(cacheID)
+    onlyIfSenderAlreadyFoundCache(cacheID){
 
         addTrackableToCache(trackableID, cacheID);
 

@@ -6,7 +6,7 @@ var SignatureVerifyerContract = artifacts.require("SignatureVerifyerContract");
 contract('TrackableContract', function(accounts) {
     var tc;
 
-    // Test case 1
+    //Test case 1
     it("Initial test", function() {
         return TrackableContract.deployed().then(function(instance) {
             tc = instance;
@@ -523,6 +523,29 @@ contract('TrackableContract', function(accounts) {
         });
     });*/
 
-    //TODO find cache
+    it("Find cache", function(){
+        return TrackableContract.deployed().then(function(instance){
+            tc = instance;
+            return tc.makeCache("cache1", 
+                "first cache", 
+                "12, 12", 
+                accounts[0],
+                {from: accounts[1]});
+        })
+        .then(function(){
+            hashedAccount = web3.utils.keccak256(accounts[2]);
+            return web3.eth.sign(hashedAccount, accounts[0]).then(function(signature){
+                    return tc.findCache(
+                        0,
+                        signature,
+                        {from: accounts[2]}
+                    )
+            })
+        }).then(function(){
+                return tc.getCacheUserHasfound(0, accounts[2]);
+        }).then(function(userHasFound){
+            assert.equal(true, userHasFound, "User has not visited")
+        });
+    });
 
 });

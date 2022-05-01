@@ -4,7 +4,7 @@ contract('GeoCachingContract', function(accounts) {
     var gcc; // To store the instance when running
 
     // Test case 1
-    it("Test owner of initial trackable is noone", function() {
+    it("Test owner of initial trackable is no one", function() {
         return GeoCachingContract.deployed().then(function(instance) {
             gcc = instance;
             return gcc.getTrackableOwner(1);

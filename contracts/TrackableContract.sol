@@ -4,7 +4,7 @@ pragma solidity <=0.10.0;
 import "./GeoCachingContract.sol";
 import "./CacheContract.sol";
 
-contract TrackableContract is GeoCachingContract, CacheContract{
+contract TrackableContract is GeoCachingContract{
 
     modifier onlyOwnerOfTrackable(uint trackableID) {
         require(msg.sender == trackables[trackableID].owner);

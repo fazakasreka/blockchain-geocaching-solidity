@@ -24,7 +24,7 @@ contract GeoCachingContract{
         return caches[cacheID].gpsCoord;
     }
     function getCachePublicKey(uint cacheID) public view
-    returns(uint publicKey){
+    returns(address publicKey){
         return caches[cacheID].publicKey;
     }
     function getCacheUserHasfound(uint cacheID, address user) public view
@@ -84,7 +84,7 @@ contract GeoCachingContract{
         string name;
         string description;
         string gpsCoord;
-        uint publicKey;
+        address publicKey;
 
         mapping(address => bool) finders;
 
@@ -103,6 +103,10 @@ contract GeoCachingContract{
     }
     function isUnCreatedCache(uint cacheID)public view returns(bool result){
         return(cacheID >= nextIndexCache);
+    }
+    modifier onlyValidCache(uint cacheID){
+        require(isValidCache(cacheID));
+        _;
     }
 
 

@@ -9,14 +9,39 @@ contract GeoCachingContract{
     uint nextIndexTrackable;
     mapping(address => TarackableCollection) ownerToTrackables;
 
-    //TODO we can only test public functions, do these as public 
-    function getCache(uint cacheID) private view
-    returns(Cache storage cache){
-        return caches[cacheID];
+    function getCacheName(uint cacheID) public view
+    returns(string memory name){
+        return caches[cacheID].name;
+    }
+    function getCacheDescription(uint cacheID) public view
+    returns(string memory description){
+        return caches[cacheID].description;
+    }
+    function getCacheGPSCoords(uint cacheID) public view
+    returns(GPS memory gpsCoords){
+        return caches[cacheID].gpsCoord;
+    }
+    function getCachePublicKey(uint cacheID) public view
+    returns(uint publicKey){
+        return caches[cacheID].publicKey;
+    }
+    function getCacheUserHasfound(uint cacheID, address user) public view
+    returns(bool hasFound){
+        return caches[cacheID].finders[user];
     }
 
-    function getTrackable(uint trackableID) private view
-    returns(Trackable storage trackable){
+    function getCacheTrackables(uint cacheID) public view
+    returns(uint[] memory cachedTrackables){
+        return caches[cacheID].trackables;
+    }
+
+    function getCacheProblems(uint cacheID) public view
+    returns(Problem[] memory problems){
+        return caches[cacheID].problems;
+    }
+
+    function getTrackable(uint trackableID) public view
+    returns(Trackable memory trackable){
         return trackables[trackableID];
     }
 
@@ -25,10 +50,6 @@ contract GeoCachingContract{
         return trackables[trackableID].owner;
     }
 
-    function getCacheTrackables(uint cacheID) private view
-    returns(uint[] memory cachedTrackables){
-        return caches[cacheID].trackables;
-    }
 
     struct GPS{
         uint latitude;
@@ -73,15 +94,15 @@ contract GeoCachingContract{
         bool isDeleted;
     }
 
-    function isDeleted(uint cacheID) internal view returns(bool result){
+    function isDeleted(uint cacheID) public view returns(bool result){
         return(cacheID < nextIndexCache && caches[cacheID].isDeleted);
     }
 
-    function isValid(uint cacheID)internal view returns(bool result){
+    function isValid(uint cacheID)public view returns(bool result){
         return(cacheID < nextIndexCache && !caches[cacheID].isDeleted);
     }
 
-    function isUnCreated(uint cacheID)internal view returns(bool result){
+    function isUnCreated(uint cacheID)public view returns(bool result){
         return(cacheID >= nextIndexCache);
     }
 

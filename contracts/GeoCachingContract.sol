@@ -9,6 +9,7 @@ contract GeoCachingContract{
     uint nextIndexTrackable;
     mapping(address => TarackableCollection) ownerToTrackables;
 
+    //TODO we can only test public functions, do these as public 
     function getCache(uint cacheID) private view
     returns(Cache storage cache){
         return caches[cacheID];
@@ -19,7 +20,7 @@ contract GeoCachingContract{
         return trackables[trackableID];
     }
 
-    function getTrackableOwner(uint trackableID)private view
+    function getTrackableOwner(uint trackableID)public view
     returns(address owner){
         return trackables[trackableID].owner;
     }

@@ -7,7 +7,7 @@ contract('TrackableContract', function(accounts) {
     var tc;
 
     // Test case 1
-    it("Test owner of initial trackable is no one", function() {
+    it("Initial test", function() {
         return TrackableContract.deployed().then(function(instance) {
             tc = instance;
             return tc.getTrackableOwner(1);

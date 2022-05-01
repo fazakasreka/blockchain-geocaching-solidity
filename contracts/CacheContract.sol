@@ -7,12 +7,12 @@ import "./SignatureVerifyerContract.sol";
 contract CacheContract is GeoCachingContract, SignatureVerifyerContract{
     
     modifier onlyOwnerOfCache(uint cacheID) {
-        require(msg.sender == caches[cacheID].owner);
+        require(msg.sender == caches[cacheID].owner, "onlyOwnerOfCache");
         _;
     }
 
     modifier onlyCacheEmpty(uint cacheID) {
-        require(caches[cacheID].trackables.length == 0);
+        require(caches[cacheID].trackables.length == 0, "onlyCacheEmpty");
         _;
     }
 
@@ -21,12 +21,12 @@ contract CacheContract is GeoCachingContract, SignatureVerifyerContract{
             signature: signature,
             cachePublicKey: caches[cacheID].publicKey,
             senderAddress: msg.sender
-            }));
+            }), "onlyValidSignature");
         _;
     }
 
     modifier onlyValidCache(uint cacheID){
-        require(isValidCache(cacheID));
+        require(isValidCache(cacheID), "onlyValidCache");
         _;
     }
 
@@ -53,8 +53,8 @@ contract CacheContract is GeoCachingContract, SignatureVerifyerContract{
         string memory gpsCoord,
         address publicKey
     ) public 
-    onlyOwnerOfCache(cacheID)
-    onlyValidCache(cacheID){
+    onlyValidCache(cacheID)
+    onlyOwnerOfCache(cacheID){
         Cache storage modifiedCache = caches[cacheID];
 
         modifiedCache.owner = msg.sender;
@@ -65,8 +65,8 @@ contract CacheContract is GeoCachingContract, SignatureVerifyerContract{
     }
     
     function removeCache(uint cacheID) public 
-    onlyOwnerOfCache(cacheID)
-    onlyCacheEmpty(cacheID){
+    onlyCacheEmpty(cacheID)
+    onlyOwnerOfCache(cacheID){
         caches[cacheID].isDeleted = true;
     }
 
@@ -77,8 +77,8 @@ contract CacheContract is GeoCachingContract, SignatureVerifyerContract{
     
 
     function findCache(uint cacheID, bytes memory signature) public 
-    onlyValidSignature(cacheID, signature)
-    onlyValidCache(cacheID){
+    onlyValidCache(cacheID)
+    onlyValidSignature(cacheID, signature){
         caches[cacheID].finders[msg.sender] = true;
     }
 

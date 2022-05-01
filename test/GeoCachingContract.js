@@ -104,7 +104,7 @@ contract('TrackableContract', function(accounts) {
         .catch(function(error) {
            assert.include(
                error.message,
-               'require',
+               'onlyValidCache',
                'You can not modify invalid cache.'
            )
         });
@@ -134,7 +134,7 @@ contract('TrackableContract', function(accounts) {
             .catch(function(error) {
                assert.include(
                    error.message,
-                   'require',
+                   'onlyOwnerOfCache',
                    'You can not modify others cache.'
                )
         //CHECK IF ORIGINAL CACHE NOT MOFIDIED
@@ -231,7 +231,7 @@ contract('TrackableContract', function(accounts) {
         .catch(function(error) {
            assert.include(
                error.message,
-               'require',
+               'onlyOwnerOfCache',
                'You can not delete non-empty cache.'
            )
         }).then(function(){
@@ -279,7 +279,7 @@ contract('TrackableContract', function(accounts) {
         .catch(function(error) {
            assert.include(
                error.message,
-               'require',
+               'onlyValidCache',
                'You can not modify invalid cache.'
            )
         }).then(function(){
@@ -369,7 +369,7 @@ contract('TrackableContract', function(accounts) {
         .catch(function(error) {
            assert.include(
                error.message,
-               'require',
+               'onlyValidCache',
                'You can not put trackable to not found.'
            )
         });
@@ -396,7 +396,7 @@ contract('TrackableContract', function(accounts) {
         .catch(function(error) {
            assert.include(
                error.message,
-               'require',
+               'onlyOwnerOfTrackable',
                'You can not put trackable to invalid cache.'
            )
         }).then(function(){
@@ -492,7 +492,7 @@ contract('TrackableContract', function(accounts) {
         .catch(function(error) {
            assert.include(
                error.message,
-               'require',
+               'onlyTrackableInCache',
                'You can not take trackable from cache which is not there.'
            )
         });

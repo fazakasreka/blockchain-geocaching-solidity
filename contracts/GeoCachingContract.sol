@@ -42,6 +42,12 @@ contract GeoCachingContract{
         return caches[cacheID].problems;
     }
 
+    function getLastCache() public view
+    returns(uint){
+        require(nextIndexCache > 0);
+        return nextIndexCache - 1;
+    }
+
     //getters for trackable
     function getTrackable(uint trackableID) public view
     returns(Trackable memory trackable){
@@ -103,10 +109,6 @@ contract GeoCachingContract{
     }
     function isUnCreatedCache(uint cacheID)public view returns(bool result){
         return(cacheID >= nextIndexCache);
-    }
-    modifier onlyValidCache(uint cacheID){
-        require(isValidCache(cacheID));
-        _;
     }
 
 

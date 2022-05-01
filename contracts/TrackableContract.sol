@@ -4,7 +4,7 @@ pragma solidity <=0.10.0;
 import "./GeoCachingContract.sol";
 import "./CacheContract.sol";
 
-contract TrackableContract is GeoCachingContract{
+contract TrackableContract is CacheContract{
 
     modifier onlyOwnerOfTrackable(uint trackableID) {
         require(msg.sender == trackables[trackableID].owner);
@@ -29,7 +29,7 @@ contract TrackableContract is GeoCachingContract{
     function makeTrackable (
         string memory name,
         string memory description
-    ) public {
+    ) public returns (uint){
         Trackable storage newTrackable  = trackables[nextIndexTrackable];
 
         newTrackable.creator = msg.sender;
@@ -40,6 +40,7 @@ contract TrackableContract is GeoCachingContract{
         ownerToTrackables[msg.sender].collectedTrackables[nextIndexTrackable] = true;
 
         nextIndexTrackable++;
+        return nextIndexTrackable - 1;
     }
 
     function putTrackable(uint trackableID, uint cacheID) public

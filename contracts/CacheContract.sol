@@ -24,7 +24,12 @@ contract CacheContract is GeoCachingContract, SignatureVerifyerContract{
             }));
         _;
     }
-    
+
+    modifier onlyValidCache(uint cacheID){
+        require(isValidCache(cacheID));
+        _;
+    }
+
     function makeCache(
         string memory name,
         string memory description,

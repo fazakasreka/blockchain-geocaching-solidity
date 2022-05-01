@@ -1,6 +1,7 @@
 var GeoCachingContract = artifacts.require("GeoCachingContract");
 var TrackableContract = artifacts.require("TrackableContract");
 var CacheContract = artifacts.require("CacheContract");
+var SignatureVerifyerContract = artifacts.require("SignatureVerifyerContract");
 
 contract('TrackableContract', function(accounts) {
     var tc;
@@ -21,17 +22,22 @@ contract('TrackableContract', function(accounts) {
 
     //Test case 2
     it("Test create cache", function(){
-        var id;
         return TrackableContract.deployed().then(function(instance){
             tc = instance;
-            return tc.makeCache.call("cache1", "first cache", "12, 12", 123);
-        }).then(function(x){
-            tc.makeCache("cache1", "first cache", "12, 12", 123);
-            return tc.isValidCache(x);
-        }).then(function(x){
-            assert.equal(true, x, "Created cache not valid");
-            //assert(true, tc.isValidCache(id), "Created cache is not valid");
-            //assert(false, tc.isDeletedCache(id), "Created cache wrongly deleted");
+            return tc.makeCache("cache1", 
+                "first cache", 
+                "12, 12", 
+                accounts[0],
+                {from: accounts[1]});
+        })
+        .then(function(){
+            return tc.getLastCache();
+        })
+        .then(function(lastAddedCache){
+            return tc.isValidCache(lastAddedCache);
+        })
+        .then(function(isValidCache){
+            assert.equal(true, isValidCache, "Created cache not valid");
         });
     });
 

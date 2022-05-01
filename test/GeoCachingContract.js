@@ -1,19 +1,63 @@
 var GeoCachingContract = artifacts.require("GeoCachingContract");
+var TrackableContract = artifacts.require("TrackableContract");
+var CacheContract = artifacts.require("CacheContract");
 
-contract('GeoCachingContract', function(accounts) {
-    var gcc; // To store the instance when running
+contract('TrackableContract', function(accounts) {
+    var tc;
 
     // Test case 1
     it("Test owner of initial trackable is no one", function() {
-        return GeoCachingContract.deployed().then(function(instance) {
-            gcc = instance;
-            return gcc.getTrackableOwner(1);
+        return TrackableContract.deployed().then(function(instance) {
+            tc = instance;
+            return tc.getTrackableOwner(1);
         }).then(function(x) {
             assert.equal(0, x, "Wrong initial trackable owner with ID 1");
+        }).then(function(){
+            return tc.isUnCreatedCache(1);
+        }).then(function(x){
+            assert.equal(true, x, "Uncreated cache wrongly exists")
         });
     });
 
-    // Test case 2
+    //Test case 2
+    it("Test create cache", function(){
+        var id;
+        return TrackableContract.deployed().then(function(instance){
+            tc = instance;
+            return tc.makeCache.call("cache1", "first cache", "12, 12", 123);
+        }).then(function(x){
+            tc.makeCache("cache1", "first cache", "12, 12", 123);
+            return tc.isValidCache(x);
+        }).then(function(x){
+            assert.equal(true, x, "Created cache not valid");
+            //assert(true, tc.isValidCache(id), "Created cache is not valid");
+            //assert(false, tc.isDeletedCache(id), "Created cache wrongly deleted");
+        });
+    });
+
+    //Test case 3
+    /*it("Test modify cache", function(){
+        var id;
+        return TrackableContract.deployed().then(function(instance){
+            tc = instance;
+            id = tc.makeCache("cache1", "original", "1, 1", 123);
+            tc.modifyCache(id, "cache2", "modified", "1, 2", 345);
+            return id;
+        }).then(function(id){
+            //cache valid-e
+            assert(false, tc.isUnCreatedCache(id), "Created cache does not exist");
+            assert(true, tc.isValidCache(id), "Created cache is not valid");
+            assert(false, tc.isDeletedCache(id), "Created cache wrongly deleted");
+
+            //módosultak-e az értékek
+            assert("cache2", tc.getCacheName(id), "Cache name invalid");
+            assert("modified", tc.getCacheDescription(id), "Cache description invalid");
+            assert("1, 2", tc.getCacheGPSCoords(id), "Cache GPS coordinates invalid");
+            assert(345, tc.getCachePublicKey(id), "Cache public key invalid");
+
+        });
+    });*/
+
     /*it("Test balance after deposit", function() {
         return SimpleBank.deployed().then(function(instance) {
             sb = instance;

@@ -9,10 +9,12 @@ contract GeoCachingContract{
     uint nextIndexTrackable;
     mapping(address => TarackableCollection) ownerToTrackables;
 
+    //getters
     function getCacheName(uint cacheID) public view
     returns(string memory name){
         return caches[cacheID].name;
     }
+    
     function getCacheDescription(uint cacheID) public view
     returns(string memory description){
         return caches[cacheID].description;
@@ -68,7 +70,6 @@ contract GeoCachingContract{
         string name;
         string description;
     }
-
     function isInCache(uint trackableID) internal view returns(bool result){
        return trackables[trackableID].owner == address(0);
     }
@@ -93,18 +94,16 @@ contract GeoCachingContract{
         
         bool isDeleted;
     }
-
     function isDeleted(uint cacheID) public view returns(bool result){
         return(cacheID < nextIndexCache && caches[cacheID].isDeleted);
     }
-
     function isValid(uint cacheID)public view returns(bool result){
         return(cacheID < nextIndexCache && !caches[cacheID].isDeleted);
     }
-
     function isUnCreated(uint cacheID)public view returns(bool result){
         return(cacheID >= nextIndexCache);
     }
+
 
     function addTrackableToCache(uint trackableID, uint cacheID) internal{
         Cache storage modifiedCache = caches[cacheID];

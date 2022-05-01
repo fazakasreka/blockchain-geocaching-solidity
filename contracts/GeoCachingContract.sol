@@ -9,12 +9,12 @@ contract GeoCachingContract{
     uint nextIndexTrackable;
     mapping(address => TarackableCollection) ownerToTrackables;
 
-    //getters
+    //getters for cache
     function getCacheName(uint cacheID) public view
     returns(string memory name){
         return caches[cacheID].name;
     }
-    
+
     function getCacheDescription(uint cacheID) public view
     returns(string memory description){
         return caches[cacheID].description;
@@ -42,6 +42,7 @@ contract GeoCachingContract{
         return caches[cacheID].problems;
     }
 
+    //getters for trackable
     function getTrackable(uint trackableID) public view
     returns(Trackable memory trackable){
         return trackables[trackableID];
@@ -54,8 +55,8 @@ contract GeoCachingContract{
 
 
     struct GPS{
-        uint latitude;
-        uint longitude;
+        string latitude;
+        string longitude;
     }
 
     struct Problem{

@@ -149,22 +149,26 @@ contract CacheContract is GeoCachingContract{
     function makeCache(
         string memory name,
         string memory description,
-        GPS memory gpsCoord,
+        string memory longitude,
+        string memory latitude,
         uint publicKey
-    ) public{
+    ) public returns(uint cacheID){
         Cache storage newCache = caches[nextIndexCache++];
         newCache.owner = msg.sender;
         newCache.name = name;
         newCache.description = description;
-        newCache.gpsCoord = gpsCoord;
+        newCache.gpsCoord = GPS({longitude: longitude, latitude: latitude});
         newCache.publicKey = publicKey;
+
+        return nextIndexCache - 1;
     }
 
     function modifyCache(
         uint cacheID,
         string memory name,
         string memory description,
-        GPS memory gpsCoord,
+        string memory longitude,
+        string memory latitude,
         uint publicKey
     ) public 
     onlyOwnerOfCache(cacheID)
@@ -174,7 +178,7 @@ contract CacheContract is GeoCachingContract{
         modifiedCache.owner = msg.sender;
         modifiedCache.name = name;
         modifiedCache.description = description;
-        modifiedCache.gpsCoord = gpsCoord;
+        modifiedCache.gpsCoord = GPS({longitude: longitude, latitude: latitude});
         modifiedCache.publicKey = publicKey;
     }
     

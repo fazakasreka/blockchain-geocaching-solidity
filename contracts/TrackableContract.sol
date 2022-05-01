@@ -7,7 +7,7 @@ import "./CacheContract.sol";
 contract TrackableContract is CacheContract{
 
     modifier onlyOwnerOfTrackable(uint trackableID) {
-        require(msg.sender == trackables[trackableID].owner);
+        require(msg.sender == trackables[trackableID].owner, "onlyOwnerOfTrackable");
         _;
     }
 
@@ -16,12 +16,12 @@ contract TrackableContract is CacheContract{
             isValidCache(cacheID)
             && isInCacheTrackable(trackableID)
             && trackables[trackableID].cacheID == cacheID
-        );
+        , "onlyTrackableInCache");
         _;
     }
 
     modifier onlyIfSenderAlreadyFoundCache(uint cacheID) {
-        require(caches[cacheID].finders[msg.sender]);
+        require(caches[cacheID].finders[msg.sender], "onlyIfSenderAlreadyFoundCache");
         _;
     }
 

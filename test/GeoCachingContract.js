@@ -210,6 +210,7 @@ contract('TrackableContract', function(accounts) {
 
     //Test case 8
     it("Remove not own cache", function() {
+        var id;
         return TrackableContract.deployed().then(function(instance) {
             tc = instance;
             return tc.makeCache("cache1", 
@@ -220,7 +221,8 @@ contract('TrackableContract', function(accounts) {
         }).then(function(){
             return tc.getLastCache();
         }).then(function(cacheID){
-            return tc.removeCache(cacheID, {from: accounts[0]});
+            id = cacheID;
+            return tc.removeCache(id, {from: accounts[0]});
         }).then(assert.fail)
         .catch(function(error) {
            assert.include(
@@ -228,6 +230,10 @@ contract('TrackableContract', function(accounts) {
                'require',
                'You can not delete non-empty cache.'
            )
+        }).then(function(){
+            return tc.isValidCache(id);
+        }).then(function(isValid){
+            assert.equal(true, isValid, "The cache should remain valid");
         });
     });
 

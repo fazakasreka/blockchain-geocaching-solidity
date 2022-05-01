@@ -7,9 +7,9 @@ contract('GeoCachingContract', function(accounts) {
     it("Test owner of initial trackable is noone", function() {
         return GeoCachingContract.deployed().then(function(instance) {
             gcc = instance;
-            return gcc.getTrackableOwner({ trackableID: 1 });
+            return gcc.getTrackableOwner(1);
         }).then(function(x) {
-            assert.equal('0x0000000000000000000000000000000000000000', x, "Wrong initial trackable owner with ID 1");
+            assert.equal(0, x, "Wrong initial trackable owner with ID 1");
         });
     });
 

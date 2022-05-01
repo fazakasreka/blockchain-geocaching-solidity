@@ -205,6 +205,10 @@ contract('TrackableContract', function(accounts) {
                'require',
                'You can not delete non-empty cache.'
            )
+        }).then(function(){
+            return tc.isValidCache(id);
+        }).then(function(isValid){
+            assert.equal(true, isValid, "The cache must remain valid")
         });
     });
 
@@ -278,6 +282,10 @@ contract('TrackableContract', function(accounts) {
                'require',
                'You can not modify invalid cache.'
            )
+        }).then(function(){
+            return tc.getCacheProblems(id);
+        }).then(function(problems){
+            assert.equal(0, problems.length, "The problem list should not contain anything");
         });
     });
 
@@ -341,6 +349,10 @@ contract('TrackableContract', function(accounts) {
                'require',
                'You can not modify invalid cache.'
            )
+        }).then(function(){
+            return tc.getCacheTrackables(id);
+        }).then(function(trackables){
+            assert.equal(0, trackables.length, "The trackable list should not contain anything");
         });
     });
 
@@ -365,6 +377,7 @@ contract('TrackableContract', function(accounts) {
 
     //Test case 14
     it("Put not own trackable to cache", function() {
+        var id;
         return TrackableContract.deployed().then(function(instance) {
             tc = instance;
             return tc.makeCache("cache1", 
@@ -377,7 +390,8 @@ contract('TrackableContract', function(accounts) {
         }).then(function(){
             return tc.getLastCache();
         }).then(function(cacheID){
-            return tc.putTrackable(0, cacheID, {from: accounts[1]});
+            id = cacheID;
+            return tc.putTrackable(0, id, {from: accounts[1]});
         }).then(assert.fail)
         .catch(function(error) {
            assert.include(
@@ -385,6 +399,10 @@ contract('TrackableContract', function(accounts) {
                'require',
                'You can not put trackable to invalid cache.'
            )
+        }).then(function(){
+            return tc.getCacheTrackables(id);
+        }).then(function(trackables){
+            assert.equal(0, trackables.length, "The trackable list should not contain anything");
         });
     });
 
@@ -424,7 +442,9 @@ contract('TrackableContract', function(accounts) {
     });*/
 
     //Test case 16
-    it("Remove trackable from not found cache", function() {
+    //TODO find cache with account 0
+    /*it("Remove trackable from not found cache", function() {
+        var id;
         return TrackableContract.deployed().then(function(instance) {
             tc = instance;
             return tc.makeCache("cache1", 
@@ -437,7 +457,10 @@ contract('TrackableContract', function(accounts) {
         }).then(function(){
             return tc.getLastCache();
         }).then(function(cacheID){
-            return tc.putTrackable(0, cacheID, {from: accounts[1]});
+            id = cacheID;
+            return tc.putTrackable(0, id, {from: accounts[0]});
+        }).then(function(){
+            return tc.takeTrackable(0, id, {from: accounts[1]});
         }).then(assert.fail)
         .catch(function(error) {
            assert.include(
@@ -445,8 +468,12 @@ contract('TrackableContract', function(accounts) {
                'require',
                'You can not take trackable from not found cache.'
            )
+        }).then(function(){
+            return tc.getCacheTrackables(id);
+        }).then(function(trackables){
+            assert.equal(1, trackables.length, "The trackable list should not contain anything");
         });
-    });
+    });*/
 
     //Test case 17
     it("Remove trackable from cache which is not there", function() {

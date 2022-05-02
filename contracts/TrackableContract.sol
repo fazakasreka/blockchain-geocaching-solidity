@@ -6,36 +6,43 @@ import "./CacheContract.sol";
 
 contract TrackableContract is CacheContract{
 
-    modifier onlyOwnerOfTrackable(uint trackableID) {
-        require(trackables[trackableID].owner == msg.sender, "onlyOwnerOfTrackable");
+    modifier onlyOwnerOfTrackable(uint _trackableID)
+    {
+        require(trackables[_trackableID].owner == msg.sender, "onlyOwnerOfTrackable");
         _;
     }
 
-    modifier onlyTrackableInCache(uint trackableID, uint cacheID) {
+    modifier onlyTrackableInCache(uint _trackableID, uint _cacheID) 
+    {
         require(
-            isValidCache(cacheID)
-            && isInCacheTrackable(trackableID)
-            && trackables[trackableID].cacheID == cacheID
-        , "onlyTrackableInCache");
+            isValidCache(_cacheID) //cache exists and is not deleted
+            && isInCacheTrackable(_trackableID) //trackable is in a cache
+            && trackables[_trackableID].cacheID == _cacheID,  //its in this cache
+            "onlyTrackableInCache"
+        );
         _;
     }
 
-    modifier onlyIfSenderAlreadyFoundCache(uint cacheID) {
-        require(caches[cacheID].finders[msg.sender], "onlyIfSenderAlreadyFoundCache");
+    modifier onlyIfSenderAlreadyFoundCache(uint _cacheID)
+    {
+        require(caches[_cacheID].finders[msg.sender], "onlyIfSenderAlreadyFoundCache");
         _;
     }
 
 
     function makeTrackable (
-        string memory name,
-        string memory description
-    ) public returns (uint){
+        string memory _name,
+        string memory _description
+    ) 
+        public
+        returns (uint)
+    {
         Trackable storage newTrackable  = trackables[nextIndexTrackable];
 
         newTrackable.creator = msg.sender;
         newTrackable.owner = msg.sender;
-        newTrackable.name = name;
-        newTrackable.description = description;
+        newTrackable.name = _name;
+        newTrackable.description = _description;
 
         ownerToTrackables[msg.sender].collectedTrackables[nextIndexTrackable] = true;
 
@@ -43,28 +50,34 @@ contract TrackableContract is CacheContract{
         return nextIndexTrackable - 1;
     }
 
-    function putTrackable(uint trackableID, uint cacheID) public
-    onlyOwnerOfTrackable(trackableID)
-    onlyValidCache(cacheID)
-    onlyIfSenderAlreadyFoundCache(cacheID){
 
-        addTrackableToCache(trackableID, cacheID);
+    function putTrackable(uint _trackableID, uint _cacheID) 
+        public
+        onlyOwnerOfTrackable(_trackableID)
+        onlyValidCache(_cacheID)
+        onlyIfSenderAlreadyFoundCache(_cacheID)
+    {
 
-        trackables[trackableID].owner = address(0);
-        trackables[trackableID].cacheID = cacheID;
+        addTrackableToCache(_trackableID, _cacheID);
 
-        ownerToTrackables[msg.sender].collectedTrackables[cacheID] = false;
+        trackables[_trackableID].owner = address(0);
+        trackables[_trackableID].cacheID = _cacheID;
+
+        ownerToTrackables[msg.sender].collectedTrackables[_cacheID] = false;
     }
 
-    function takeTrackable(uint trackableID, uint cacheID) public 
-    onlyTrackableInCache(trackableID, cacheID)
-    onlyIfSenderAlreadyFoundCache(cacheID){
 
-        removeTrackableFromCache(trackableID, cacheID);
+    function takeTrackable(uint _trackableID, uint _cacheID) 
+        public 
+        onlyTrackableInCache(_trackableID, _cacheID)
+        onlyIfSenderAlreadyFoundCache(_cacheID)
+    {
 
-        trackables[trackableID].owner = msg.sender;
+        removeTrackableFromCache(_trackableID, _cacheID);
 
-        ownerToTrackables[msg.sender].collectedTrackables[trackableID] = true;
+        trackables[_trackableID].owner = msg.sender;
+
+        ownerToTrackables[msg.sender].collectedTrackables[_trackableID] = true;
     }
 
 }

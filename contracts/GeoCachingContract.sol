@@ -114,11 +114,11 @@ contract GeoCachingContract{
 
 
 //////getters for trackable
-    function getTrackable(uint _trackableID) 
+    function getTrackableCreator(uint _trackableID)
         public view
-        returns(Trackable memory trackable)
+        returns(address creator)
     {
-        return trackables[_trackableID];
+        return trackables[_trackableID].creator;
     }
 
     function getTrackableOwner(uint _trackableID)
@@ -128,11 +128,25 @@ contract GeoCachingContract{
         return trackables[_trackableID].owner;
     }
 
-    function getTrackableCache(uint _trackableID)
+    function getTrackableCacheID(uint _trackableID)
         public view
         returns(uint cacheID)
     {
         return trackables[_trackableID].cacheID;
+    }
+
+    function getTrackableName(uint _trackableID)
+        public view
+        returns(string memory name)
+    {
+        return trackables[_trackableID].name;
+    }
+
+    function getTrackableDescription(uint _trackableID)
+        public view
+        returns(string memory description)
+    {
+        return trackables[_trackableID].description;
     }
 
     function getLastTrackable()

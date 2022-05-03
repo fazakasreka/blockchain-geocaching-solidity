@@ -4,9 +4,9 @@ const testCacheName =  "This is a test cache"
 const testCacheDescription =  "This is the test cache's description"
 const testLocation = "47°29'33″N  19°03'05″E"
 
-const testCacheNameModifyed =  "This is a modifyed title"
-const testCacheDescriptionModifyed  =  "This is a modifyed desc"
-const testLocationModifyed  = "66°29'33″N  77°03'05″E modifyed"
+const testCacheNameModifyed =  "This is a modified title"
+const testCacheDescriptionModifyed  =  "This is a modified description"
+const testLocationModifyed  = "66°29'33″N  77°03'05″E modified"
 
 const testTrackableName = "This is a test trackable"
 const testTrackableDescription = "This is a test trackable description"
@@ -140,19 +140,19 @@ contract('TrackableContract', (accounts) => {
         })
     })
 
-    it("modifyCache: only valid cache can be modifyed (onlyValidCache)", () => 
+    it("modifyCache: only valid cache can be modified (onlyValidCache)", () => 
     {
         return contract.then(async instance => 
         {
             cacheOwner = accounts[0]
             newPublicKey = accounts[3]
             
-            //get an UNCREATED cahe
+            //get an UNCREATED cache
             var cacheID = await instance.getLastCache.call()
             cacheID = cacheID.toNumber() + 1
 
             isUnCreatedCache = await instance.isUnCreatedCache.call(cacheID)
-            assert.equal(true, isUnCreatedCache, "Failed to aquire uncreated cache for test")
+            assert.equal(true, isUnCreatedCache, "Failed to acquire uncreated cache for test")
             
             //try to modify uncreated cache
             var failed = false
@@ -172,7 +172,7 @@ contract('TrackableContract', (accounts) => {
                     'Modify uncreated cache failed as expected, but not because onlyValidCache modifier'
                 )
             })
-            assert.equal(true, failed, "An uncreated cache was modifed")
+            assert.equal(true, failed, "An uncreated cache was modified")
 
             //get DELETED cache
                 //make cache
@@ -188,9 +188,9 @@ contract('TrackableContract', (accounts) => {
             await instance.removeCache(
                 cacheID
             )
-                //check delete succesfull
+                //check delete successfull
             isDeletedCache = await instance.isDeletedCache.call(cacheID)
-            assert.equal(true, isDeletedCache, "Failed to aquire deleted cache for test")
+            assert.equal(true, isDeletedCache, "Failed to acquire deleted cache for test")
             
              //try to modify deleted cache
              var failed = false
@@ -210,7 +210,7 @@ contract('TrackableContract', (accounts) => {
                      'Modify uncreated cache failed as expected, but not because onlyValidCache modifier'
                  )
              })
-             assert.equal(true, failed, "An uncreated cache was modifed")
+             assert.equal(true, failed, "An uncreated cache was modified")
         
         })
     })
@@ -291,7 +291,7 @@ contract('TrackableContract', (accounts) => {
                 {from: sender}
             )
 
-            //test sucess of removeCache
+            //test success of removeCache
             cacheDeleted = await instance.isDeletedCache.call(cacheID)
             assert.equal(true, cacheDeleted, "Contract.removeCache(...) failed")
         })
@@ -304,12 +304,12 @@ contract('TrackableContract', (accounts) => {
             cacheOwner = accounts[0]
             newPublicKey = accounts[3]
             
-            //get an UNCREATED cahe
+            //get an UNCREATED cache
             var cacheID = await instance.getLastCache.call()
             cacheID = cacheID.toNumber() + 1
 
             isUnCreatedCache = await instance.isUnCreatedCache.call(cacheID)
-            assert.equal(true, isUnCreatedCache, "Failed to aquire uncreated cache for test")
+            assert.equal(true, isUnCreatedCache, "Failed to acquire uncreated cache for test")
             
             //try to remove uncreated cache
             var failed = false
@@ -343,7 +343,7 @@ contract('TrackableContract', (accounts) => {
             )
                 //check delete succesfull
             isDeletedCache = await instance.isDeletedCache.call(cacheID)
-            assert.equal(true, isDeletedCache, "Failed to aquire deleted cache for test")
+            assert.equal(true, isDeletedCache, "Failed to acquire deleted cache for test")
             
              //try to remove deleted cache
              var failed = false
@@ -427,7 +427,7 @@ contract('TrackableContract', (accounts) => {
                      'Remove uncreated cache failed as expected, but not because onlyCacheEmpty modifier'
                  )
              })
-             assert.equal(true, failed, "A cash with trackables cache was removed.")
+             assert.equal(true, failed, "A cache with trackables was removed.")
         
         })
     })
@@ -461,7 +461,7 @@ contract('TrackableContract', (accounts) => {
             await instance.removeCache(
                     cacheID,
                     {from: senderOfRemove}
-            //test fro faliour
+            //test fro failure
             ).catch(error => {
                 failed = true
                 assert.include(
@@ -532,7 +532,7 @@ contract('TrackableContract', (accounts) => {
             await instance.reportProblem(
                 testProblemText,
                 cacheID,
-            //test for faliour
+            //test for failure
             ).catch(error => {
                 failed = true
                 assert.include(
@@ -547,7 +547,7 @@ contract('TrackableContract', (accounts) => {
         })
     })
 
-    it("findCahe: normal function", () => 
+    it("findCache: normal function", () => 
     {
         return contract.then(async instance => 
         {
@@ -579,7 +579,7 @@ contract('TrackableContract', (accounts) => {
         })
     })
 
-    it("findCahe: invalid cache (onlyValidCache)", () => 
+    it("findCache: invalid cache (onlyValidCache)", () => 
     {
         return contract.then(async instance => 
         {
@@ -599,7 +599,7 @@ contract('TrackableContract', (accounts) => {
                 cacheID,
                 signature,
                 {from: sender}
-            )//test for faliour
+            )//test for failure
             .catch(error => {
                 failed = true
                 assert.include(
@@ -613,7 +613,7 @@ contract('TrackableContract', (accounts) => {
     })
     
 
-    it("findCahe: sign with wrong private key (onlyValidSignature)", () => 
+    it("findCache: sign with wrong private key (onlyValidSignature)", () => 
     {
         return contract.then(async instance => 
         {
@@ -641,7 +641,7 @@ contract('TrackableContract', (accounts) => {
                 cacheID,
                 signature,
                 {from: player}
-            )//test for faliour
+            )//test for failure
             .catch(error => {
                 failed = true
                 assert.include(
@@ -650,12 +650,12 @@ contract('TrackableContract', (accounts) => {
                     'User finding cache signed with wrong private key failed, but not because onlyValidSignature modifier'
                 )
             })
-            assert.equal(true, failed, "User foun cache with with wrong private key")
+            assert.equal(true, failed, "User found cache with wrong private key")
         })
     })
 
 
-    it("findCahe: sign wrong address (onlyValidSignature)", () => 
+    it("findCache: sign wrong address (onlyValidSignature)", () => 
     {
         return contract.then(async instance => 
         {
@@ -684,7 +684,7 @@ contract('TrackableContract', (accounts) => {
                 cacheID,
                 signature,
                 {from: player1}
-            )//test for faliour
+            )//test for failure
             .catch(error => {
                 failed = true
                 assert.include(
@@ -693,7 +693,7 @@ contract('TrackableContract', (accounts) => {
                     'User finding cache with wrong address signed failed, but not because onlyValidSignature modifier'
                 )
             })
-            assert.equal(true, failed, "User foun cache with wrong adress signed with publicKey")
+            assert.equal(true, failed, "User found cache with wrong adress signed with publicKey")
         })
     })
 
@@ -783,7 +783,7 @@ contract('TrackableContract', (accounts) => {
         })
     })
 
-    it("putTrackable: only owner can put it in a box (onlyOwnerOfTrackable)", () => 
+    it("putTrackable: only owner can put it in a cache (onlyOwnerOfTrackable)", () => 
     {
         return contract.then(async instance => 
         {
@@ -829,20 +829,20 @@ contract('TrackableContract', (accounts) => {
                 trackableID, 
                 cacheID,
                 {from: userPuttingInCache}
-            )//test for faliour
+            )//test for failure
             .catch(error => {
                 failed = true
                 assert.include(
                     error.message,
                     'onlyOwnerOfTrackable',
-                    'User not owner of trackable puting trackable in cache failed, but not because onlyOwnerOfTrackable modifier'
+                    'User not owner of trackable putting trackable in cache failed, but not because onlyOwnerOfTrackable modifier'
                 )
             })
             assert.equal(true, failed, "User not owner of trackable put trackable in cache")
         })
     })
 
-    it("putTrackable: only valid Cache can recive trackable (onlyValidCache)", () => 
+    it("putTrackable: only valid cache can recive trackable (onlyValidCache)", () => 
     {
         return contract.then(async instance => 
         {
@@ -872,7 +872,7 @@ contract('TrackableContract', (accounts) => {
                 trackableID, 
                 cacheID,
                 {from: trackabeOwner}
-            )//test for faliour
+            )//test for failure
             .catch(error => {
                 failed = true
                 assert.include(
@@ -885,7 +885,7 @@ contract('TrackableContract', (accounts) => {
         })
     })
 
-    it("putTrackable: only one who found the box can put things into the box (onlyIfSenderAlreadyFoundCache)", () => 
+    it("putTrackable: only one who found the cache can put things into the cache (onlyIfSenderAlreadyFoundCache)", () => 
     {
         return contract.then(async instance => 
         {
@@ -921,7 +921,7 @@ contract('TrackableContract', (accounts) => {
                 trackableID, 
                 cacheID,
                 {from: trackableOwner}
-            )//test for faliour
+            )//test for failure
             .catch(error => {
                 failed = true
                 assert.include(
@@ -1057,7 +1057,7 @@ contract('TrackableContract', (accounts) => {
                 cacheID,
                 {from: takerOftrackable}
             )
-            //test for faliour
+            //test for failure
             .catch(error => {
                 failed = true
                 assert.include(
@@ -1128,7 +1128,7 @@ contract('TrackableContract', (accounts) => {
                 cacheID,
                 {from: takerOftrackable}
             )
-            //test for faliour
+            //test for failure
             .catch(error => {
                 failed = true
                 assert.include(

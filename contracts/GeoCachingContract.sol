@@ -3,93 +3,15 @@ pragma solidity >=0.8.0;
 pragma solidity <=0.10.0;
 
 contract GeoCachingContract{
+
+////static data
     mapping(uint=>Cache) caches;
     uint nextIndexCache;
     mapping(uint => Trackable) trackables;
     uint nextIndexTrackable;
     mapping(address => TrackableCollection) ownerToTrackables;
 
-    //getters for cache
-    function getCacheOwner(uint cacheID) public view
-    returns(address owner){
-        return caches[cacheID].owner;
-    }
-
-    function getCacheName(uint cacheID) public view
-    returns(string memory name){
-        return caches[cacheID].name;
-    }
-
-    function getCacheDescription(uint cacheID) public view
-    returns(string memory description){
-        return caches[cacheID].description;
-    }
-    function getCacheGPSCoords(uint cacheID) public view
-    returns(string memory gpsCoord){
-        return caches[cacheID].gpsCoord;
-    }
-    function getCachePublicKey(uint cacheID) public view
-    returns(address publicKey){
-        return caches[cacheID].publicKey;
-    }
-    function getCacheUserHasfound(uint cacheID, address user) public view
-    returns(bool hasFound){
-        return caches[cacheID].finders[user];
-    }
-
-    function getCacheTrackables(uint cacheID) public view
-    returns(uint[] memory cachedTrackables){
-        return caches[cacheID].trackables;
-    }
-
-    function getCacheProblems(uint cacheID) public view
-    returns(Problem[] memory problems){
-        return caches[cacheID].problems;
-    }
-
-    function getLastCache() public view
-    returns(uint){
-        require(nextIndexCache > 0);
-        return nextIndexCache - 1;
-    }
-
-    //getters for trackable
-    function getTrackable(uint trackableID) public view
-    returns(Trackable memory trackable){
-        return trackables[trackableID];
-    }
-
-    function getTrackableOwner(uint trackableID)public view
-    returns(address owner){
-        return trackables[trackableID].owner;
-    }
-
-    struct Problem{
-        address reporter;
-        string problem;
-    }
-
-    struct Trackable{
-        address creator;
-        address owner;
-        uint cacheID;
-        string name;
-        string description;
-    }
-    function isInCacheTrackable(uint trackableID) internal view returns(bool result){
-       return trackables[trackableID].owner == address(0) && trackableID < nextIndexTrackable;
-    }
-    function isAtOwnerTrackable(uint trackableID) internal view returns(bool result){
-       return trackables[trackableID].owner != address(0) && trackableID < nextIndexTrackable;
-    }
-    function isUnCreatedTrackable(uint trackableID) internal view returns(bool result){
-       return trackableID >= nextIndexTrackable;
-    }
-
-    struct TrackableCollection{
-        mapping(uint => bool) collectedTrackables;
-    }
-
+////data structures
     struct Cache{
         address owner;
         string name;
@@ -106,30 +28,196 @@ contract GeoCachingContract{
         
         bool isDeleted;
     }
-    function isDeletedCache(uint cacheID) public view returns(bool result){
-        return(cacheID < nextIndexCache && caches[cacheID].isDeleted);
-    }
-    function isValidCache(uint cacheID)public view returns(bool result){
-        return(cacheID < nextIndexCache && !caches[cacheID].isDeleted);
-    }
-    function isUnCreatedCache(uint cacheID)public view returns(bool result){
-        return(cacheID >= nextIndexCache);
-    }
 
-
-//INTERNAL!!!!!
-    function addTrackableToCache(uint trackableID, uint cacheID) internal{
-        Cache storage modifiedCache = caches[cacheID];
-
-        modifiedCache.trackables.push(trackableID);
-        modifiedCache.trackableToArrayIndex[trackableID] = modifiedCache.trackables.length - 1;
+    struct Trackable{
+        address creator;
+        address owner;
+        uint cacheID;
+        string name;
+        string description;
     }
 
-    function removeTrackableFromCache(uint trackableID, uint cacheID) internal{
-        Cache storage modifiedCache = caches[cacheID];
+    struct Problem{
+        address reporter;
+        string problem;
+    }
 
-        uint potentialIndex = modifiedCache.trackableToArrayIndex[trackableID];
-        require(modifiedCache.trackables[potentialIndex] == trackableID);
+    struct TrackableCollection{
+        mapping(uint => bool) collectedTrackables;
+    }
+
+
+//////getters for cache
+    function getCacheOwner(uint _cacheID) 
+        public view
+        returns(address owner)
+    {
+        return caches[_cacheID].owner;
+    }
+
+    function getCacheName(uint _cacheID)
+        public view
+        returns(string memory name)
+    {
+        return caches[_cacheID].name;
+    }
+
+    function getCacheDescription(uint _cacheID) 
+        public view
+        returns(string memory description)
+    {
+        return caches[_cacheID].description;
+    }
+
+    function getCacheGPSCoords(uint _cacheID) 
+        public view
+        returns(string memory gpsCoord)
+    {
+        return caches[_cacheID].gpsCoord;
+    }
+
+    function getCachePublicKey(uint _cacheID)
+        public view
+        returns(address publicKey)
+    {
+        return caches[_cacheID].publicKey;
+    }
+
+    function getCacheUserHasfound(uint _cacheID, address _user)
+        public view
+        returns(bool hasFound)
+    {
+        return caches[_cacheID].finders[_user];
+    }
+
+    function getCacheTrackables(uint _cacheID)
+        public view
+        returns(uint[] memory cachedTrackables)
+    {
+        return caches[_cacheID].trackables;
+    }
+
+    function getCacheProblems(uint _cacheID) 
+        public view
+        returns(Problem[] memory problems)
+    {
+        return caches[_cacheID].problems;
+    }
+
+    function getLastCache()
+        public view
+        returns(uint)
+    {
+        require(nextIndexCache > 0);
+        return nextIndexCache - 1;
+    }
+
+
+//////getters for trackable
+    function getTrackableCreator(uint _trackableID)
+        public view
+        returns(address creator)
+    {
+        return trackables[_trackableID].creator;
+    }
+
+    function getTrackableOwner(uint _trackableID)
+        public view
+        returns(address owner)
+    {
+        return trackables[_trackableID].owner;
+    }
+
+    function getTrackableCacheID(uint _trackableID)
+        public view
+        returns(uint cacheID)
+    {
+        return trackables[_trackableID].cacheID;
+    }
+
+    function getTrackableName(uint _trackableID)
+        public view
+        returns(string memory name)
+    {
+        return trackables[_trackableID].name;
+    }
+
+    function getTrackableDescription(uint _trackableID)
+        public view
+        returns(string memory description)
+    {
+        return trackables[_trackableID].description;
+    }
+
+    function getLastTrackable()
+        public view
+        returns(uint)
+    {
+        require(nextIndexTrackable > 0);
+        return nextIndexTrackable - 1;
+    }
+
+
+////cache state functions
+    function isDeletedCache(uint _cacheID) 
+        public view
+        returns(bool result)
+    {
+        return(_cacheID < nextIndexCache && caches[_cacheID].isDeleted);
+    }
+
+    function isValidCache(uint _cacheID)
+        public view 
+        returns(bool result)
+    {
+        return(_cacheID < nextIndexCache && !caches[_cacheID].isDeleted);
+    }
+    function isUnCreatedCache(uint _cacheID)
+        public view 
+        returns(bool result)
+    {
+        return(_cacheID >= nextIndexCache);
+    }
+
+
+////trackable state functions
+    function isInCacheTrackable(uint _trackableID)
+        public view 
+        returns(bool result)
+    {
+       return trackables[_trackableID].owner == address(0) && _trackableID < nextIndexTrackable;
+    }
+    function isAtOwnerTrackable(uint _trackableID) 
+        public view
+        returns(bool result)
+    {
+       return trackables[_trackableID].owner != address(0) && _trackableID < nextIndexTrackable;
+    }
+    function isUnCreatedTrackable(uint _trackableID) 
+        public view 
+        returns(bool result)
+    {
+       return _trackableID >= nextIndexTrackable;
+    }
+
+
+//KEEP INTERNAL!! //helper functions for handling trackable arrays
+    function addTrackableToCache(uint _trackableID, uint _cacheID) 
+        internal
+    {
+        Cache storage modifiedCache = caches[_cacheID];
+
+        modifiedCache.trackables.push(_trackableID);
+        modifiedCache.trackableToArrayIndex[_trackableID] = modifiedCache.trackables.length - 1;
+    }
+
+    function removeTrackableFromCache(uint _trackableID, uint _cacheID) 
+        internal
+    {
+        Cache storage modifiedCache = caches[_cacheID];
+
+        uint potentialIndex = modifiedCache.trackableToArrayIndex[_trackableID];
+        require(modifiedCache.trackables[potentialIndex] == _trackableID);
         //index is good
 
         uint last = modifiedCache.trackables[modifiedCache.trackables.length - 1];

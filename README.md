@@ -1,9 +1,9 @@
 # blockchain-geocaching-solidity
 
-A Solidity smart contract for geocaching.
+This Solidity smart contract enables geocaching with blockchain verification.
 
-You can hide geocaching boxes with priviate keys inside and register them on the blockchain with their public key.
-If you find a geocaching box, you can sign your blockchain adress with the private key inside, and if it checks out, you will be registered as the owner on the blockchain.
+- Users can hide geocaching boxes containing private keys and register them on the blockchain using the corresponding public key.
+- When someone finds a geocaching box, they can sign their blockchain address with the private key inside.
+- If the signature is valid, the contract updates the finder as the new registered owner.
 
-This was homework project for a class, while it's well-tested, we do not take resposibility for any issues if you decide to actually deploy this on the blockchain.
-
+**Disclaimer**: This was a homework project for a class. While it is well-tested, we do not take responsibility for any issues if you decide to deploy it on the blockchain.
